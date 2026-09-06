@@ -182,13 +182,73 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
   border:1px solid rgba(255,255,255,.25);border-radius:9px;background:rgba(10,14,10,.45);
   color:#fff;font-size:16px;line-height:1;display:grid;place-items:center;
   touch-action:none;-webkit-tap-highlight-color:transparent;backdrop-filter:blur(2px);
-  user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
+  /* 方向鍵是操作用的按鈕，不是文字：全面關掉選取／長按選單／拖曳，
+     長按不會跳出「拷貝」之類的系統選單。 */
+  user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;
+  -webkit-touch-callout:none;-webkit-user-drag:none;user-drag:none;
 }
 .dpad-btn:active{background:rgba(227,181,101,.55);border-color:rgba(227,181,101,.7)}
 .dpad-up{grid-column:2;grid-row:1}
 .dpad-left{grid-column:1;grid-row:2}
 .dpad-right{grid-column:3;grid-row:2}
 .dpad-down{grid-column:2;grid-row:3}
+
+/* ── 旋轉提示：手機直式時整頁換成這個，逼玩家轉成橫式才能玩 ──
+   只鎖「觸控 + 沒有 hover」裝置（手機／平板），滑鼠桌機不管視窗多窄多扁都不會被擋。 */
+.rotate-gate{
+  display:none;position:fixed;inset:0;z-index:20;
+  flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  padding:32px;text-align:center;background:var(--bg);color:var(--ink);
+}
+.rotate-gate-icon{width:76px;height:76px;color:var(--gold);animation:rotateHint 1.8s ease-in-out infinite}
+.rotate-gate-icon svg{width:100%;height:100%;display:block}
+@keyframes rotateHint{0%,42%{transform:rotate(0deg)}58%,100%{transform:rotate(90deg)}}
+.rotate-gate h2{
+  margin:0;font-family:var(--display);font-size:19px;font-weight:700;
+  letter-spacing:.04em;color:var(--gold);
+}
+.rotate-gate p{margin:0;font-size:13px;line-height:1.6;color:var(--ink-dim);max-width:300px}
+@media (prefers-reduced-motion:reduce){ .rotate-gate-icon{animation:none} }
+
+@media (pointer:coarse) and (hover:none) and (orientation:portrait){
+  .rotate-gate{display:flex}
+  .shell{display:none}
+  .credit-stack{display:none}
+}
+
+/* ── 手機橫式：沿用電腦版一模一樣的元件與排版，只把尺寸／留白收緊，
+   讓整套 GUI 塞得進矮螢幕，不另外做一套簡化版介面。 ── */
+@media (pointer:coarse) and (hover:none) and (orientation:landscape){
+  .shell{padding:8px 12px 10px;gap:8px}
+  .masthead{gap:8px}
+  .wordmark{gap:8px}
+  .wordmark h1{font-size:15px;letter-spacing:.03em}
+  .wordmark p{display:none}
+  .nav button{padding:6px 13px;font-size:12px}
+  .theme-toggle{width:30px;height:30px;font-size:14px}
+  .credit-stack{display:none}
+
+  .play{gap:8px}
+  .hud{width:min(80vh,100%);padding:6px 10px;gap:3px 12px}
+  .hud-kicker{font-size:9px;letter-spacing:.2em}
+  .hud .clock{font-size:22px}
+  .hud-mode{font-size:11px}
+  .hud-facts{font-size:10.5px;gap:2px 10px}
+  .hud-note{font-size:10.5px}
+  .hud-acts{gap:6px}
+  .hud-acts .btn,.hud-acts .chip{padding:6px 9px;font-size:11px}
+  .btn kbd{display:none}
+
+  .arena{width:min(80vh,100%)}
+  .veil-time{font-size:38px}
+
+  .dpad{transform:scale(.88);transform-origin:bottom left}
+}
+@media (pointer:coarse) and (hover:none) and (orientation:landscape) and (max-height:420px){
+  .shell{padding:6px 10px 8px}
+  .hud{width:min(88vh,100%)}
+  .arena{width:min(88vh,100%)}
+}
 
 /* ── 側欄 ── */
 .mod{border:1px solid var(--line);border-radius:4px;background:var(--panel);overflow:hidden;box-shadow:var(--shadow)}
@@ -278,6 +338,19 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 </head>
 <body>
 
+<div class="rotate-gate" id="rotateGate" role="alert" aria-live="polite">
+  <div class="rotate-gate-icon" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="6" y="2.5" width="9" height="15" rx="1.6"></rect>
+      <line x1="10.5" y1="14.6" x2="10.5" y2="14.6"></line>
+      <path d="M18 8.2c2.2 1.7 2.2 6 0 7.7" opacity=".85"></path>
+      <path d="M20 6.4c3.4 2.7 3.4 9.5 0 12.2" opacity=".55"></path>
+    </svg>
+  </div>
+  <h2>請將手機轉成橫式</h2>
+  <p>迷途神廟需要較寬的畫面才能操作走位，把裝置轉橫，遊戲就會自動出現。</p>
+</div>
+
 <div class="shell">
   <header class="masthead">
     <div class="wordmark">
@@ -324,7 +397,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
       <div>
         <div class="veil-kicker">暫停</div>
         <div class="veil-time" id="veilTime">0.00</div>
-        <p>按 Esc 繼續</p>
+        <p>點畫面或按 Esc 繼續</p>
       </div>
     </div>
 
@@ -1083,6 +1156,8 @@ function reveal() {
   syncStatus();
 }
 $("#btnPause").addEventListener("click", togglePause);
+/* 手機沒有 Esc 鍵，暫停畫面本身也能點一下繼續。 */
+$("#veil").addEventListener("click", () => { if (run.paused) togglePause(); });
 
 /* 觸控方向鍵：跟鍵盤共用同一個 held 集合，物理／移動邏輯完全不用另外寫一份。 */
 const DPAD_KEY = { up: "KeyW", down: "KeyS", left: "KeyA", right: "KeyD" };
@@ -1099,6 +1174,9 @@ document.querySelectorAll(".dpad-btn").forEach(btn => {
   btn.addEventListener("pointerup", release);
   btn.addEventListener("pointercancel", release);
   btn.addEventListener("pointerleave", release);
+  /* 保險：某些瀏覽器長按仍會冒出系統選單（拷貝／分享等），這裡直接擋掉。 */
+  btn.addEventListener("contextmenu", e => e.preventDefault());
+  btn.addEventListener("selectstart", e => e.preventDefault());
 });
 
 /* ── 每幀 ── */
