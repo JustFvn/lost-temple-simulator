@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-Hant" class="page-play">
+<html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -182,93 +182,13 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
   border:1px solid rgba(255,255,255,.25);border-radius:9px;background:rgba(10,14,10,.45);
   color:#fff;font-size:16px;line-height:1;display:grid;place-items:center;
   touch-action:none;-webkit-tap-highlight-color:transparent;backdrop-filter:blur(2px);
-  /* 方向鍵是操作用的按鈕，不是文字：全面關掉選取／長按選單／拖曳，
-     長按不會跳出「拷貝」之類的系統選單。 */
-  user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;
-  -webkit-touch-callout:none;-webkit-user-drag:none;user-drag:none;
+  user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
 }
 .dpad-btn:active{background:rgba(227,181,101,.55);border-color:rgba(227,181,101,.7)}
 .dpad-up{grid-column:2;grid-row:1}
 .dpad-left{grid-column:1;grid-row:2}
 .dpad-right{grid-column:3;grid-row:2}
 .dpad-down{grid-column:2;grid-row:3}
-
-/* ── 旋轉提示：手機直式時整頁換成這個，逼玩家轉成橫式才能玩 ──
-   只鎖「觸控 + 沒有 hover」裝置（手機／平板），滑鼠桌機不管視窗多窄多扁都不會被擋。 */
-.rotate-gate{
-  display:none;position:fixed;inset:0;z-index:20;
-  flex-direction:column;align-items:center;justify-content:center;gap:16px;
-  padding:32px;text-align:center;background:var(--bg);color:var(--ink);
-}
-.rotate-gate-icon{width:76px;height:76px;color:var(--gold);animation:rotateHint 1.8s ease-in-out infinite}
-.rotate-gate-icon svg{width:100%;height:100%;display:block}
-@keyframes rotateHint{0%,42%{transform:rotate(0deg)}58%,100%{transform:rotate(90deg)}}
-.rotate-gate h2{
-  margin:0;font-family:var(--display);font-size:19px;font-weight:700;
-  letter-spacing:.04em;color:var(--gold);
-}
-.rotate-gate p{margin:0;font-size:13px;line-height:1.6;color:var(--ink-dim);max-width:300px}
-@media (prefers-reduced-motion:reduce){ .rotate-gate-icon{animation:none} }
-
-@media (pointer:coarse) and (hover:none) and (orientation:portrait){
-  .rotate-gate{display:flex}
-  .shell{display:none}
-  .credit-stack{display:none}
-}
-
-/* ── 手機橫式：把電腦版原本的元件原封不動搬過來，只是排列方式改成
-   「棋盤在左、HUD 當右側欄」── 這正是電腦版設定頁本來就在用的「主內容 + 側欄」
-   骨架（.page-setup 那組 grid），棋盤高度直接吃滿整個可用高度，不再用猜的
-   vh 百分比，橫式手機才不會因為欄位太矮而把棋盤壓得小小一塊。 ── */
-@media (pointer:coarse) and (hover:none) and (orientation:landscape){
-  .shell{padding:8px 12px;gap:6px}
-  .masthead{gap:8px}
-  .wordmark{gap:8px}
-  .wordmark h1{font-size:14px;letter-spacing:.03em}
-  .wordmark p{display:none}
-  .nav button{padding:5px 12px;font-size:11.5px}
-  .theme-toggle{width:28px;height:28px;font-size:13px}
-  .credit-stack{display:none}
-  .btn kbd{display:none}
-}
-
-/* 只有「練習」分頁在橫式手機上才整頁鎖高度、關掉捲動——
-   設定頁維持電腦版原本會自然往下長、需要就捲動的行為，不受影響。 */
-@media (pointer:coarse) and (hover:none) and (orientation:landscape){
-  html.page-play,html.page-play body{height:100%;overflow:hidden}
-  html.page-play .shell{height:100vh;height:100dvh;overflow:hidden;display:flex;flex-direction:column}
-  html.page-play .masthead{flex:0 0 auto}
-  html.page-play .page-play.on{flex:1 1 auto;min-height:0;display:flex}
-
-  html.page-play .play{
-    flex:1 1 auto;min-height:0;width:100%;
-    flex-direction:row;align-items:stretch;justify-content:center;gap:10px;
-  }
-
-  /* 棋盤：寬度不再猜，改成「吃滿容器高度、寬度用 1:1 比例反推」。 */
-  html.page-play .arena{width:auto;height:100%;flex:0 0 auto}
-
-  /* HUD 從電腦版的「上方橫條」變成「棋盤右側直的側欄」，
-     裡面每一項還是同一批元件，只是方向從橫排改直排。 */
-  html.page-play .hud{
-    flex:1 1 auto;min-width:150px;max-width:230px;width:auto;height:100%;
-    flex-direction:column;flex-wrap:nowrap;align-items:flex-start;justify-content:flex-start;
-    gap:8px;overflow-y:auto;padding:12px;
-  }
-  html.page-play .hud-kicker{flex:0 0 auto}
-  html.page-play .hud-facts{flex-direction:column;align-items:flex-start;gap:5px;font-size:11.5px}
-  html.page-play .hud-note{font-size:11px}
-  html.page-play .hud-acts{
-    margin-left:0;margin-top:auto;flex-direction:column;align-items:stretch;
-    width:100%;gap:6px;
-  }
-  html.page-play .hud-acts .btn,html.page-play .hud-acts .chip{width:100%;justify-content:center}
-  html.page-play .veil-time{font-size:34px}
-}
-@media (pointer:coarse) and (hover:none) and (orientation:landscape) and (max-height:420px){
-  html.page-play .hud{padding:8px}
-  html.page-play .dpad{transform:scale(.85);transform-origin:bottom left}
-}
 
 /* ── 側欄 ── */
 .mod{border:1px solid var(--line);border-radius:4px;background:var(--panel);overflow:hidden;box-shadow:var(--shadow)}
@@ -358,19 +278,6 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 </head>
 <body>
 
-<div class="rotate-gate" id="rotateGate" role="alert" aria-live="polite">
-  <div class="rotate-gate-icon" aria-hidden="true">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="6" y="2.5" width="9" height="15" rx="1.6"></rect>
-      <line x1="10.5" y1="14.6" x2="10.5" y2="14.6"></line>
-      <path d="M18 8.2c2.2 1.7 2.2 6 0 7.7" opacity=".85"></path>
-      <path d="M20 6.4c3.4 2.7 3.4 9.5 0 12.2" opacity=".55"></path>
-    </svg>
-  </div>
-  <h2>請將手機轉成橫式</h2>
-  <p>迷途神廟需要較寬的畫面才能操作走位，把裝置轉橫，遊戲就會自動出現。</p>
-</div>
-
 <div class="shell">
   <header class="masthead">
     <div class="wordmark">
@@ -417,7 +324,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
       <div>
         <div class="veil-kicker">暫停</div>
         <div class="veil-time" id="veilTime">0.00</div>
-        <p>點畫面或按 Esc 繼續</p>
+        <p>按 Esc 繼續</p>
       </div>
     </div>
 
@@ -1176,8 +1083,6 @@ function reveal() {
   syncStatus();
 }
 $("#btnPause").addEventListener("click", togglePause);
-/* 手機沒有 Esc 鍵，暫停畫面本身也能點一下繼續。 */
-$("#veil").addEventListener("click", () => { if (run.paused) togglePause(); });
 
 /* 觸控方向鍵：跟鍵盤共用同一個 held 集合，物理／移動邏輯完全不用另外寫一份。 */
 const DPAD_KEY = { up: "KeyW", down: "KeyS", left: "KeyA", right: "KeyD" };
@@ -1194,9 +1099,6 @@ document.querySelectorAll(".dpad-btn").forEach(btn => {
   btn.addEventListener("pointerup", release);
   btn.addEventListener("pointercancel", release);
   btn.addEventListener("pointerleave", release);
-  /* 保險：某些瀏覽器長按仍會冒出系統選單（拷貝／分享等），這裡直接擋掉。 */
-  btn.addEventListener("contextmenu", e => e.preventDefault());
-  btn.addEventListener("selectstart", e => e.preventDefault());
 });
 
 /* ── 每幀 ── */
@@ -1597,7 +1499,6 @@ function setPage(p) {
     run.running = false;
   }
   held.clear();
-  document.documentElement.classList.toggle("page-play", p === "play");
   $("#navPlay").setAttribute("aria-pressed", p === "play");
   $("#navSetup").setAttribute("aria-pressed", p === "setup");
   $("#pagePlay").classList.toggle("on", p === "play");
