@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" class="page-play">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -216,38 +216,58 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
   .credit-stack{display:none}
 }
 
-/* ── 手機橫式：沿用電腦版一模一樣的元件與排版，只把尺寸／留白收緊，
-   讓整套 GUI 塞得進矮螢幕，不另外做一套簡化版介面。 ── */
+/* ── 手機橫式：把電腦版原本的元件原封不動搬過來，只是排列方式改成
+   「棋盤在左、HUD 當右側欄」── 這正是電腦版設定頁本來就在用的「主內容 + 側欄」
+   骨架（.page-setup 那組 grid），棋盤高度直接吃滿整個可用高度，不再用猜的
+   vh 百分比，橫式手機才不會因為欄位太矮而把棋盤壓得小小一塊。 ── */
 @media (pointer:coarse) and (hover:none) and (orientation:landscape){
-  .shell{padding:8px 12px 10px;gap:8px}
+  .shell{padding:8px 12px;gap:6px}
   .masthead{gap:8px}
   .wordmark{gap:8px}
-  .wordmark h1{font-size:15px;letter-spacing:.03em}
+  .wordmark h1{font-size:14px;letter-spacing:.03em}
   .wordmark p{display:none}
-  .nav button{padding:6px 13px;font-size:12px}
-  .theme-toggle{width:30px;height:30px;font-size:14px}
+  .nav button{padding:5px 12px;font-size:11.5px}
+  .theme-toggle{width:28px;height:28px;font-size:13px}
   .credit-stack{display:none}
-
-  .play{gap:8px}
-  .hud{width:min(80vh,100%);padding:6px 10px;gap:3px 12px}
-  .hud-kicker{font-size:9px;letter-spacing:.2em}
-  .hud .clock{font-size:22px}
-  .hud-mode{font-size:11px}
-  .hud-facts{font-size:10.5px;gap:2px 10px}
-  .hud-note{font-size:10.5px}
-  .hud-acts{gap:6px}
-  .hud-acts .btn,.hud-acts .chip{padding:6px 9px;font-size:11px}
   .btn kbd{display:none}
+}
 
-  .arena{width:min(80vh,100%)}
-  .veil-time{font-size:38px}
+/* 只有「練習」分頁在橫式手機上才整頁鎖高度、關掉捲動——
+   設定頁維持電腦版原本會自然往下長、需要就捲動的行為，不受影響。 */
+@media (pointer:coarse) and (hover:none) and (orientation:landscape){
+  html.page-play,html.page-play body{height:100%;overflow:hidden}
+  html.page-play .shell{height:100vh;height:100dvh;overflow:hidden;display:flex;flex-direction:column}
+  html.page-play .masthead{flex:0 0 auto}
+  html.page-play .page-play.on{flex:1 1 auto;min-height:0;display:flex}
 
-  .dpad{transform:scale(.88);transform-origin:bottom left}
+  html.page-play .play{
+    flex:1 1 auto;min-height:0;width:100%;
+    flex-direction:row;align-items:stretch;justify-content:center;gap:10px;
+  }
+
+  /* 棋盤：寬度不再猜，改成「吃滿容器高度、寬度用 1:1 比例反推」。 */
+  html.page-play .arena{width:auto;height:100%;flex:0 0 auto}
+
+  /* HUD 從電腦版的「上方橫條」變成「棋盤右側直的側欄」，
+     裡面每一項還是同一批元件，只是方向從橫排改直排。 */
+  html.page-play .hud{
+    flex:1 1 auto;min-width:150px;max-width:230px;width:auto;height:100%;
+    flex-direction:column;flex-wrap:nowrap;align-items:flex-start;justify-content:flex-start;
+    gap:8px;overflow-y:auto;padding:12px;
+  }
+  html.page-play .hud-kicker{flex:0 0 auto}
+  html.page-play .hud-facts{flex-direction:column;align-items:flex-start;gap:5px;font-size:11.5px}
+  html.page-play .hud-note{font-size:11px}
+  html.page-play .hud-acts{
+    margin-left:0;margin-top:auto;flex-direction:column;align-items:stretch;
+    width:100%;gap:6px;
+  }
+  html.page-play .hud-acts .btn,html.page-play .hud-acts .chip{width:100%;justify-content:center}
+  html.page-play .veil-time{font-size:34px}
 }
 @media (pointer:coarse) and (hover:none) and (orientation:landscape) and (max-height:420px){
-  .shell{padding:6px 10px 8px}
-  .hud{width:min(88vh,100%)}
-  .arena{width:min(88vh,100%)}
+  html.page-play .hud{padding:8px}
+  html.page-play .dpad{transform:scale(.85);transform-origin:bottom left}
 }
 
 /* ── 側欄 ── */
@@ -1577,6 +1597,7 @@ function setPage(p) {
     run.running = false;
   }
   held.clear();
+  document.documentElement.classList.toggle("page-play", p === "play");
   $("#navPlay").setAttribute("aria-pressed", p === "play");
   $("#navSetup").setAttribute("aria-pressed", p === "setup");
   $("#pagePlay").classList.toggle("on", p === "play");
