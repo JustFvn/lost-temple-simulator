@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>迷途神廟模擬器</title>
 <script>
 /* 在畫面畫出來之前先套用已儲存的主題，避免閃一下錯的顏色再跳回來。 */
@@ -174,17 +174,22 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 /* 觸控方向鍵：手機/平板沒有實體鍵盤，靠 pointer:coarse 自動偵測觸控裝置才顯示，
    桌機滑鼠操作時完全不會冒出來。 */
 .dpad{
-  display:none;position:absolute;left:10px;bottom:10px;z-index:4;
-  grid-template-columns:repeat(3,46px);grid-template-rows:repeat(3,46px);gap:5px;
+  display:none;flex:none;
+  grid-template-columns:repeat(3,52px);grid-template-rows:repeat(3,52px);gap:6px;
+  padding:10px;border:1px solid var(--line);border-radius:12px;
+  background:var(--panel);box-shadow:var(--shadow);
+  user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
+  -webkit-tap-highlight-color:transparent;touch-action:none;
 }
-@media (pointer:coarse){ .dpad{display:grid} }
+@media (any-pointer:coarse){ .dpad{display:grid} }
 .dpad-btn{
-  border:1px solid rgba(255,255,255,.25);border-radius:9px;background:rgba(10,14,10,.45);
-  color:#fff;font-size:16px;line-height:1;display:grid;place-items:center;
+  border:1px solid var(--edge-strong);border-radius:9px;background:var(--panel-alt);
+  color:var(--ink);font-size:16px;line-height:1;display:grid;place-items:center;
   touch-action:none;-webkit-tap-highlight-color:transparent;backdrop-filter:blur(2px);
   user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
 }
-.dpad-btn:active{background:rgba(227,181,101,.55);border-color:rgba(227,181,101,.7)}
+.dpad-btn:active,.dpad-btn.is-held{background:rgba(var(--gold-rgb),.25);border-color:var(--gold);color:var(--gold-deep)}
+.dpad *{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .dpad-up{grid-column:2;grid-row:1}
 .dpad-left{grid-column:1;grid-row:2}
 .dpad-right{grid-column:3;grid-row:2}
@@ -274,6 +279,52 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
   border-bottom-width:2px;border-color:var(--edge-strong);border-bottom-color:var(--edge-strong);
   border-radius:3px;padding:2px 7px;color:var(--ink);justify-self:start;white-space:nowrap;
 }
+
+/* ?????????????????????????? */
+@media (max-width:600px){
+  html{scrollbar-gutter:auto}
+  .shell{
+    padding:18px max(12px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));
+    gap:18px;
+  }
+  .masthead{gap:14px}
+  .wordmark{flex-direction:column;align-items:flex-start;gap:8px;min-width:0}
+  .wordmark h1{font-size:23px;line-height:1.25}
+  .wordmark p{font-size:12px;line-height:1.5}
+  .masthead-right{width:100%;gap:10px}
+  .nav{flex:1;display:flex}
+  .nav button{flex:1;min-height:44px;padding:10px 16px}
+  .theme-toggle{width:44px;height:44px;flex:none}
+  .play{gap:14px}
+  .hud,.arena{width:100%;max-width:560px}
+  .hud{padding:14px;gap:10px 14px;border-radius:8px}
+  .hud .clock{font-size:36px}
+  .hud-mode{flex:1;line-height:1.5}
+  .hud-facts{flex:0 0 100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 12px;line-height:1.5}
+  .hud-note{line-height:1.6}
+  .hud-acts{width:100%;margin:2px 0 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .hud-acts .btn,.hud-acts .chip{min-height:44px;padding:10px 8px;text-align:center;justify-content:center}
+  .hud-acts .chip{grid-column:1 / -1;border-radius:6px}
+  .hud-acts kbd{display:none}
+  .arena,.mod{border-radius:8px}
+  .dpad{grid-template-columns:repeat(3,54px);grid-template-rows:repeat(3,48px)}
+  .mod > h2{padding:13px 14px;letter-spacing:.12em}
+  .mod-body{padding:14px}
+  .seg button,.acts .btn,.pager .btn{min-height:44px}
+  .pager .idbox{min-height:44px}
+  .pager input{font-size:20px}
+  .hint,.check-row,.legend,.keys{font-size:13px;line-height:1.65}
+  .check-row{min-height:44px}
+  .check-row input{width:20px;height:20px;flex:none}
+  .pv-meta{flex-wrap:wrap;line-height:1.5}
+  .legend div{align-items:flex-start}
+  .legend i{margin-top:3px}
+  .veil{padding:16px}
+  .veil-time{font-size:clamp(36px,12vw,56px)}
+}
+@media (any-pointer:coarse) and (orientation:landscape) and (max-height:600px){
+  .hud,.arena{width:min(72vh,100%);width:min(72svh,100%)}
+}
 </style>
 </head>
 <body>
@@ -328,14 +379,16 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
       </div>
     </div>
 
-    <div class="dpad" id="dpad">
+  </main>
+
+    <div class="dpad" id="dpad" role="group" aria-label="????">
       <button class="dpad-btn dpad-up"    data-dir="up"    aria-label="上">▲</button>
       <button class="dpad-btn dpad-left"  data-dir="left"  aria-label="左">◀</button>
       <button class="dpad-btn dpad-right" data-dir="right" aria-label="右">▶</button>
       <button class="dpad-btn dpad-down"  data-dir="down"  aria-label="下">▼</button>
     </div>
 
-  </main>
+
 
   </div>
   </div>
@@ -1091,14 +1144,17 @@ document.querySelectorAll(".dpad-btn").forEach(btn => {
   const press = e => {
     e.preventDefault();
     if (page !== "play") return;
+    btn.setPointerCapture(e.pointerId);
+    btn.classList.add("is-held");
     held.add(key);
     if (!run.running && !run.done && !run.paused) { run.running = true; run.started = performance.now(); }
   };
-  const release = e => { e.preventDefault(); held.delete(key); };
+  const release = () => { held.delete(key); btn.classList.remove("is-held"); };
   btn.addEventListener("pointerdown", press);
   btn.addEventListener("pointerup", release);
   btn.addEventListener("pointercancel", release);
-  btn.addEventListener("pointerleave", release);
+  btn.addEventListener("lostpointercapture", release);
+  addEventListener("blur", release);
 });
 
 /* ── 每幀 ── */
