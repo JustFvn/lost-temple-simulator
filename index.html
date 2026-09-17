@@ -280,30 +280,30 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
   border-radius:3px;padding:2px 7px;color:var(--ink);justify-self:start;white-space:nowrap;
 }
 
-/* ?????????????????????????? */
-@media (max-width:600px){
+/* Responsive touch layout */
+@media (max-width:860px){
   html{scrollbar-gutter:auto}
   .shell{
-    padding:18px max(12px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));
-    gap:18px;
+    padding:10px max(4px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(4px,env(safe-area-inset-left));
+    gap:10px;
   }
-  .masthead{gap:14px}
+  .masthead{gap:8px;padding:0 6px}
   .wordmark{flex-direction:column;align-items:flex-start;gap:8px;min-width:0}
-  .wordmark h1{font-size:23px;line-height:1.25}
-  .wordmark p{font-size:12px;line-height:1.5}
-  .masthead-right{width:100%;gap:10px}
+  .wordmark h1{font-size:20px;line-height:1.25}
+  .wordmark p{display:none}
+  .masthead-right{width:auto;gap:6px;margin-left:auto}
   .nav{flex:1;display:flex}
-  .nav button{flex:1;min-height:44px;padding:10px 16px}
+  .nav button{flex:1;min-height:44px;padding:10px 12px}
   .theme-toggle{width:44px;height:44px;flex:none}
-  .play{gap:14px}
-  .hud,.arena{width:100%;max-width:560px}
-  .hud{padding:14px;gap:10px 14px;border-radius:8px}
-  .hud .clock{font-size:36px}
+  .play{gap:8px}
+  .hud,.arena{width:100%;max-width:none}
+  .hud{padding:8px 10px;gap:6px 12px;border-radius:8px}
+  .hud .clock{font-size:30px}
   .hud-mode{flex:1;line-height:1.5}
   .hud-facts{flex:0 0 100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 12px;line-height:1.5}
   .hud-note{line-height:1.6}
-  .hud-acts{width:100%;margin:2px 0 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-  .hud-acts .btn,.hud-acts .chip{min-height:44px;padding:10px 8px;text-align:center;justify-content:center}
+  .hud-acts{width:100%;margin:2px 0 0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+  .hud-acts .btn,.hud-acts .chip{min-height:44px;padding:8px 2px;font-size:12px;text-align:center;justify-content:center}
   .hud-acts .chip{grid-column:1 / -1;border-radius:6px}
   .hud-acts kbd{display:none}
   .arena,.mod{border-radius:8px}
@@ -323,7 +323,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
   .veil-time{font-size:clamp(36px,12vw,56px)}
 }
 @media (any-pointer:coarse) and (orientation:landscape) and (max-height:600px){
-  .hud,.arena{width:min(72vh,100%);width:min(72svh,100%)}
+  .hud,.arena{width:min(90vh,100%);width:min(90svh,100%)}
 }
 </style>
 </head>
