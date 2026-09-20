@@ -874,7 +874,9 @@ function roundRect(ctx, x, y, w, h, r) {
  */
 function paintBoard(ctx, px, st) {
   const s = px / BOARD;
-  ctx.setTransform(s, 0, 0, s, 0, 0);
+  ctx.save();
+  // Preserve the caller's device-pixel scale and shake translation.
+  ctx.scale(s, s);
   ctx.clearRect(0, 0, BOARD, BOARD);
 
   ctx.fillStyle = C.mortar;                       // 石造骨架
@@ -920,7 +922,7 @@ function paintBoard(ctx, px, st) {
   if (st.player) drawPlayer(ctx, st.player);
 
   drawStartMark(ctx);
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.restore();
 }
 
 function drawGoal(ctx) {
